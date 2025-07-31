@@ -1,0 +1,10 @@
+id = "datadog-mcp"
+name = "Datadog MCP Server"
+version = "0.0.1"
+schema_version = 1
+authors = ["Roberto Huertas <roberto.huertas@outlook.com>"]
+description = "Datadog MCP Server for Zed"
+repository = "https://github.com/robertohuertasm/zed-datadog-mcp"
+
+[context_servers.datadog-mcp]
+name = "Datadog MCP Server"
