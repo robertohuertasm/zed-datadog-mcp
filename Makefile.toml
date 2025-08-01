@@ -1,0 +1,29 @@
+[tasks.clippy]
+clear = true
+workspace = false
+install_crate = "cargo-clippy"
+toolchain = "nightly"
+command = "cargo"
+args = ["clippy", "-Z", "unstable-options"]
+
+[tasks.clippy-stable]
+workspace = false
+install_crate = "cargo-clippy"
+command = "cargo"
+args = ["clippy"]
+
+[tasks.clippy-pedantic]
+workspace = false
+install_crate = "cargo-clippy"
+command = "cargo"
+args = [
+    "clippy",
+    "--all",
+    "--",
+    "-D",
+    "clippy::pedantic",
+    "-D",
+    "clippy::nursery",
+    "-D",
+    "warnings",
+]

@@ -7,4 +7,6 @@ Read more about the MCP Server on the [Datadog blog](https://www.datadoghq.com/b
 
 ### MCP Server Installation Instructions
 
-You don't need to do anything special to configure this MCP Server, just click on configure server and follow the instructions to log in to your Datadog account.
+Make sure you are using the correct site value: **US1, US3, US5, EU1, AP1, or AP2**.
+
+Finally, **click on Configure Server** and follow the prompts to log in to your Datadog account.

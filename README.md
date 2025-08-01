@@ -1,3 +1,5 @@
+
+
 # Datadog MCP Server extension
 
 Simple extension exposing access to the Datadog Remote MCP server.
