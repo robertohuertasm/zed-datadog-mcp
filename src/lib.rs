@@ -25,14 +25,16 @@ fn get_mcp_url(project: &Project) -> String {
         .unwrap_or_else(|| "US1".to_string())
         .to_uppercase();
 
+    let mcp_path = "api/unstable/mcp-server/mcp?referrer_ide=zed";
+
     match site.as_str() {
-        "US1" => "https://mcp.datadoghq.com/api/unstable/mcp-server/mcp".to_string(),
-        "US3" => "https://mcp.us3.datadoghq.com/api/unstable/mcp-server/mcp".to_string(),
-        "US5" => "https://mcp.us5.datadoghq.com/api/unstable/mcp-server/mcp".to_string(),
-        "EU1" => "https://mcp.datadoghq.eu/api/unstable/mcp-server/mcp".to_string(),
-        "AP1" => "https://mcp.ap1.datadoghq.com/api/unstable/mcp-server/mcp".to_string(),
-        "AP2" => "https://mcp.ap2.datadoghq.com/api/unstable/mcp-server/mcp".to_string(),
-        _ => format!("https://mcp.{site}.datadoghq.com/api/unstable/mcp-server/mcp"),
+        "US1" => format!("https://mcp.datadoghq.com/api/unstable/mcp-server/mcp?{mcp_path}"),
+        "US3" => format!("https://mcp.us3.datadoghq.com/api/unstable/mcp-server/mcp?{mcp_path}"),
+        "US5" => format!("https://mcp.us5.datadoghq.com/api/unstable/mcp-server/mcp?{mcp_path}"),
+        "EU1" => format!("https://mcp.datadoghq.eu/api/unstable/mcp-server/mcp?{mcp_path}"),
+        "AP1" => format!("https://mcp.ap1.datadoghq.com/api/unstable/mcp-server/mcp?{mcp_path}"),
+        "AP2" => format!("https://mcp.ap2.datadoghq.com/api/unstable/mcp-server/mcp?{mcp_path}"),
+        _ => format!("https://mcp.{site}.datadoghq.com/api/unstable/mcp-server/mcp?{mcp_path}"),
     }
 }
 
