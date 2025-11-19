@@ -53,7 +53,6 @@ impl zed::Extension for DatadogMcpServer {
         // let latest_version = zed::npm_package_latest_version(PACKAGE_NAME)?;
         // 0.1.31 has issues, so we need to pin to 0.1.30 for now
         let version = zed::npm_package_installed_version(PACKAGE_NAME)?;
-        println!("Datadog MCP: installed version: {:?}", version);
         if version.as_deref() != Some("0.1.30") {
             zed::npm_install_package(PACKAGE_NAME, "0.1.30")?;
         }
