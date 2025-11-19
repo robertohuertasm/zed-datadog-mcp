@@ -28,13 +28,13 @@ fn get_mcp_url(project: &Project) -> String {
     let mcp_path = "api/unstable/mcp-server/mcp?referrer_ide=zed";
 
     match site.as_str() {
-        "US1" => format!("https://mcp.datadoghq.com/api/unstable/mcp-server/mcp?{mcp_path}"),
-        "US3" => format!("https://mcp.us3.datadoghq.com/api/unstable/mcp-server/mcp?{mcp_path}"),
-        "US5" => format!("https://mcp.us5.datadoghq.com/api/unstable/mcp-server/mcp?{mcp_path}"),
-        "EU1" => format!("https://mcp.datadoghq.eu/api/unstable/mcp-server/mcp?{mcp_path}"),
-        "AP1" => format!("https://mcp.ap1.datadoghq.com/api/unstable/mcp-server/mcp?{mcp_path}"),
-        "AP2" => format!("https://mcp.ap2.datadoghq.com/api/unstable/mcp-server/mcp?{mcp_path}"),
-        _ => format!("https://mcp.{site}.datadoghq.com/api/unstable/mcp-server/mcp?{mcp_path}"),
+        "US1" => format!("https://mcp.datadoghq.com/{mcp_path}"),
+        "US3" => format!("https://mcp.us3.datadoghq.com/{mcp_path}"),
+        "US5" => format!("https://mcp.us5.datadoghq.com/{mcp_path}"),
+        "EU1" => format!("https://mcp.datadoghq.eu/{mcp_path}"),
+        "AP1" => format!("https://mcp.ap1.datadoghq.com/{mcp_path}"),
+        "AP2" => format!("https://mcp.ap2.datadoghq.com/{mcp_path}"),
+        _ => format!("https://mcp.{site}.datadoghq.com/{mcp_path}"),
     }
 }
 
