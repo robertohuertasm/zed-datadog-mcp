@@ -7,7 +7,7 @@ use zed_extension_api::{
     settings::ContextServerSettings,
 };
 
-const PACKAGE_NAME: &str = "mcp-remote";
+const PACKAGE_NAME: &str = "mcp-remote@0.1.30";
 const PACKAGE_PATH: &str = "node_modules/mcp-remote/dist/proxy.js";
 
 #[derive(Debug, Deserialize, JsonSchema)]
