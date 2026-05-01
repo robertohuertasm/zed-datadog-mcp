@@ -7,25 +7,47 @@ use zed_extension_api::{
     settings::ContextServerSettings,
 };
 
+mod mcp_remote_patch;
+
 const PACKAGE_NAME: &str = "mcp-remote";
-const PACKAGE_PATH: &str = "node_modules/mcp-remote/dist/proxy.js";
 
 #[derive(Debug, Deserialize, JsonSchema)]
 struct DatadogMcpServerConfiguration {
     #[serde(default)]
     site: Option<String>,
+    #[serde(default)]
+    toolsets: Vec<String>,
 }
 
 fn get_mcp_url(project: &Project) -> String {
-    let site = ContextServerSettings::for_project("datadog-mcp", project)
+    let settings = ContextServerSettings::for_project("datadog-mcp", project)
         .ok()
         .and_then(|s| s.settings)
-        .and_then(|s| serde_json::from_value::<DatadogMcpServerConfiguration>(s).ok())
-        .and_then(|s| s.site)
+        .and_then(|s| serde_json::from_value::<DatadogMcpServerConfiguration>(s).ok());
+
+    let site = settings
+        .as_ref()
+        .and_then(|s| s.site.clone())
         .unwrap_or_else(|| "US1".to_string())
         .to_uppercase();
 
-    let mcp_path = "api/unstable/mcp-server/mcp?referrer_ide=zed";
+    let mut query_params = vec!["referrer_ide=zed".to_string()];
+
+    if let Some(toolsets) = settings
+        .as_ref()
+        .map(|s| {
+            s.toolsets
+                .iter()
+                .map(|toolset| toolset.trim())
+                .filter(|toolset| !toolset.is_empty())
+                .collect::<Vec<_>>()
+        })
+        .filter(|toolsets| !toolsets.is_empty())
+    {
+        query_params.push(format!("toolsets={}", toolsets.join(",")));
+    }
+
+    let mcp_path = format!("api/unstable/mcp-server/mcp?{}", query_params.join("&"));
 
     match site.as_str() {
         "US1" => format!("https://mcp.datadoghq.com/{mcp_path}"),
@@ -60,14 +82,16 @@ impl zed::Extension for DatadogMcpServer {
         //     zed::npm_install_package(PACKAGE_NAME, &latest_version)?;
         // }
 
+        let current_dir = env::current_dir().unwrap();
+        mcp_remote_patch::apply(&current_dir)?;
+
         let mcp_url = get_mcp_url(project);
 
         Ok(Command {
             command: zed::node_binary_path()?,
             args: vec![
-                env::current_dir()
-                    .unwrap()
-                    .join(PACKAGE_PATH)
+                current_dir
+                    .join(mcp_remote_patch::PACKAGE_PATH)
                     .to_string_lossy()
                     .to_string(),
                 mcp_url,
@@ -89,13 +113,25 @@ impl zed::Extension for DatadogMcpServer {
         let mut default_settings =
             include_str!("../configuration/default_settings.jsonc").to_string();
 
-        if let Some(site) = settings
+        if let Some(config) = settings
             .ok()
             .and_then(|s| s.settings)
             .and_then(|s| serde_json::from_value::<DatadogMcpServerConfiguration>(s).ok())
-            .and_then(|s| s.site)
         {
-            default_settings = default_settings.replace("\"US1\"", &format!("\"{site}\""));
+            if let Some(site) = config.site {
+                default_settings = default_settings.replace("\"US1\"", &format!("\"{site}\""));
+            }
+
+            if !config.toolsets.is_empty() {
+                let toolsets = config
+                    .toolsets
+                    .iter()
+                    .map(|toolset| format!("\"{toolset}\""))
+                    .collect::<Vec<_>>()
+                    .join(", ");
+                default_settings = default_settings
+                    .replace("\"toolsets\": []", &format!("\"toolsets\": [{toolsets}]"));
+            }
         }
 
         let settings_schema =

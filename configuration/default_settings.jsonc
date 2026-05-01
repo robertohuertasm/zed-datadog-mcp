@@ -1,4 +1,15 @@
 {
   /// Your site: US1, US3, US5, EU1, AP1, AP2
-  "site": "US1"
+  "site": "US1",
+
+  /// Toolsets to enable. If omitted or empty, Datadog uses the default `core` toolset.
+  /// Available toolsets: https://docs.datadoghq.com/bits_ai/mcp_server/setup/?tab=vscode#available-toolsets
+  /// Examples:
+  /// - ["core"]
+  /// - ["core", "dashboards", "synthetics"]
+  /// - ["all"]
+  /// Common toolsets include: core, alerting, dashboards, dbm, ddsql, error-tracking,
+  /// kubernetes, llmobs, networks, product-analytics, security, software-delivery,
+  /// synthetics, workflows, and apm (Preview).
+  "toolsets": []
 }
