@@ -1,5 +1,3 @@
-use std::env;
-
 use schemars::JsonSchema;
 use serde::Deserialize;
 use zed_extension_api::{
@@ -7,9 +5,8 @@ use zed_extension_api::{
     settings::ContextServerSettings,
 };
 
-mod mcp_remote_patch;
-
-const PACKAGE_NAME: &str = "mcp-remote";
+const PACKAGE_NAME: &str = "@robertohuertasm/mcp-remote";
+const PROXY_PATH: &str = "node_modules/@robertohuertasm/mcp-remote/dist/proxy.js";
 
 #[derive(Debug, Deserialize, JsonSchema)]
 struct DatadogMcpServerConfiguration {
@@ -73,29 +70,27 @@ impl zed::Extension for DatadogMcpServer {
         _context_server_id: &ContextServerId,
         project: &Project,
     ) -> Result<Command> {
-        // let latest_version = zed::npm_package_latest_version(PACKAGE_NAME)?;
-        // 0.1.31 has issues, so we need to pin to 0.1.30 for now
+        let latest_version = zed::npm_package_latest_version(PACKAGE_NAME)?;
         let version = zed::npm_package_installed_version(PACKAGE_NAME)?;
-        if version.as_deref() != Some("0.1.30") {
-            zed::npm_install_package(PACKAGE_NAME, "0.1.30")?;
+        if version.as_deref() != Some(latest_version.as_str()) {
+            zed::npm_install_package(PACKAGE_NAME, &latest_version)?;
         }
-        // if version.as_deref() != Some(latest_version.as_ref()) {
-        //     zed::npm_install_package(PACKAGE_NAME, &latest_version)?;
-        // }
 
-        let current_dir = env::current_dir().unwrap();
-        mcp_remote_patch::apply(&current_dir)?;
-
+        let current_dir = std::env::current_dir().unwrap();
         let mcp_url = get_mcp_url(project);
+
+        let proxy_path = current_dir.join(PROXY_PATH).to_string_lossy().to_string();
 
         Ok(Command {
             command: zed::node_binary_path()?,
             args: vec![
-                current_dir
-                    .join(mcp_remote_patch::PACKAGE_PATH)
-                    .to_string_lossy()
-                    .to_string(),
+                proxy_path,
                 mcp_url,
+                "--ready-delay-ms".to_string(),
+                "2000".to_string(),
+                "--tools-delay-ms".to_string(),
+                "2000".to_string(),
+                "--no-default-scope".to_string(),
             ],
             env: vec![],
         })
