@@ -56,6 +56,7 @@ fn get_mcp_url(project: &Project) -> String {
         "EU1" => format!("https://mcp.datadoghq.eu/{mcp_path}"),
         "AP1" => format!("https://mcp.ap1.datadoghq.com/{mcp_path}"),
         "AP2" => format!("https://mcp.ap2.datadoghq.com/{mcp_path}"),
+        "UK1" => format!("https://mcp.uk1.datadoghq.com/{mcp_path}"),
         _ => format!("https://mcp.{site}.datadoghq.com/{mcp_path}"),
     }
 }
